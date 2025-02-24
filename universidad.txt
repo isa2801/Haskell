@@ -1,2 +1,0 @@
-Estudiante {id = "343", entrada = 2025-02-24 15:15:34.8537057 UTC, salida = 2025-02-24 15:15:54.4948722 UTC}
-Estudiante {id = "123", entrada = 2025-02-24 15:15:30.4778449 UTC, salida = Nothing}
