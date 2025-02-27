@@ -1,30 +1,30 @@
-import Data.Time.Clock
-import Data.List
-import System.IO
-import Control.Exception
-import Control.DeepSeq (deepseq)
+import Data.Time.Clock --Proporciona tipos y funciones para trabajar con tiempo (UTCTime, NominalDiffTime)
+import Data.List --Contiene funciones para manipular listas, como `find`
+import System.IO --Permite operaciones de entrada/salida como lectura/escritura de archivos
+import Control.Exception --Manejo de excepciones
+import Control.DeepSeq (deepseq) --Proporciona la función `deepseq` para forzar la evaluación completa de estructuras de datos-}
 
 -- Definición del tipo de datos para representar la información de un estudiante
 data Estudiante = Estudiante {
-    idEstudiante :: String,
+    id :: String,
     entrada :: UTCTime,
     salida :: Maybe UTCTime  -- Usamos Maybe para representar que el estudiante aún está en la universidad o ya salió
-} deriving (Show, Read)
+} deriving (Show, Read) --Permite convertir automáticamente entre Estudiante y String
 
 -- Función para registrar la entrada de un estudiante a la universidad
 registrarEntrada :: String -> UTCTime -> [Estudiante] -> [Estudiante]
-registrarEntrada id tiempo universidad =
-    Estudiante id tiempo Nothing : universidad
+registrarEntrada idEstudiante tiempo universidad =
+    Estudiante idEstudiante tiempo Nothing : universidad
 
 -- Función para registrar la salida de un estudiante de la universidad
 registrarSalida :: String -> UTCTime -> [Estudiante] -> [Estudiante]
-registrarSalida id tiempo universidad =
-    map (\e -> if id == idEstudiante e then e { salida = Just tiempo } else e) universidad
-
+registrarSalida idEstudiante tiempo universidad =
+    map (\e -> if idEstudiante == Main.id e then e { salida = Just tiempo } else e) universidad {-Usa `Main.id` para evitar conflictos 
+                                                                                                con la función `id` de Haskell-}
 -- Función para buscar un estudiante por su ID en la universidad
 buscarEstudiante :: String -> [Estudiante] -> Maybe Estudiante
-buscarEstudiante id universidad =
-    find (\e -> id == idEstudiante e && isNothing (salida e)) universidad
+buscarEstudiante idEstudiante universidad =
+    find (\e -> idEstudiante == Main.id e && isNothing (salida e)) universidad
     where
         isNothing Nothing = True
         isNothing _       = False
@@ -40,7 +40,7 @@ guardarUniversidad :: [Estudiante] -> IO ()
 guardarUniversidad universidad = do
     withFile "universidad.txt" WriteMode $ \h -> do
         hPutStr h (unlines (map mostrarEstudiante universidad))
-    putStrLn "Universidad guardada en el archivo universidad.txt."
+    putStrLn "Registro guardado en el archivo universidad.txt."
 
 -- Función para cargar la información de los estudiantes desde un archivo de texto
 cargarUniversidad :: IO [Estudiante]
@@ -56,7 +56,7 @@ cargarUniversidad = do
 -- Función para mostrar la información de un estudiante como cadena de texto
 mostrarEstudiante :: Estudiante -> String
 mostrarEstudiante (Estudiante id entrada salida) =
-    "Estudiante {idEstudiante = \"" ++ id ++ "\", entrada = " ++ show entrada ++ ", salida = " ++ maybe "Nothing" show salida ++ "}"
+    "Estudiante {id = \"" ++ id ++ "\", entrada = " ++ show entrada ++ ", salida = " ++ maybe "Nothing" show salida ++ "}"
 
 -- Función para listar los estudiantes en la universidad
 listarEstudiantes :: [Estudiante] -> IO ()
@@ -70,7 +70,7 @@ main :: IO ()
 main = do
     -- Cargar la universidad desde el archivo de texto
     universidad <- cargarUniversidad
-    putStrLn "¡Bienvenido al Sistema de Gestión de Universidad!"
+    putStrLn "¡Bienvenido al Sistema de Gestión de Registro de Estudiantes!"
 
     -- Ciclo principal del programa
     cicloPrincipal universidad
@@ -89,30 +89,30 @@ cicloPrincipal universidad = do
     case opcion of
         "1" -> do
             putStrLn "Ingrese el ID del estudiante:"
-            id <- getLine
+            idEstudiante <- getLine
             tiempoActual <- getCurrentTime
-            let universidadActualizada = registrarEntrada id tiempoActual universidad
-            putStrLn $ "Estudiante con ID " ++ id ++ " ingresado a la universidad."
+            let universidadActualizada = registrarEntrada idEstudiante tiempoActual universidad
+            putStrLn $ "Estudiante con ID " ++ idEstudiante ++ " registrado en la universidad."
             guardarUniversidad universidadActualizada
             cicloPrincipal universidadActualizada
 
         "2" -> do
-            putStrLn "Ingrese el ID del estudiante a salir:"
-            id <- getLine
+            putStrLn "Ingrese el ID del estudiante que sale:"
+            idEstudiante <- getLine
             tiempoActual <- getCurrentTime
-            let universidadActualizada = registrarSalida id tiempoActual universidad
-            putStrLn $ "Estudiante con ID " ++ id ++ " salido de la universidad."
+            let universidadActualizada = registrarSalida idEstudiante tiempoActual universidad
+            putStrLn $ "Estudiante con ID " ++ idEstudiante ++ " ha salido de la universidad."
             guardarUniversidad universidadActualizada
             cicloPrincipal universidadActualizada
 
         "3" -> do
             putStrLn "Ingrese el ID del estudiante a buscar:"
-            id <- getLine
-            case buscarEstudiante id universidad of
+            idEstudiante <- getLine
+            case buscarEstudiante idEstudiante universidad of
                 Just estudiante -> do
                     tiempoTotal <- tiempoEnUniversidad estudiante
-                    putStrLn $ "El estudiante con ID " ++ id ++ " se encuentra en la universidad."
-                    putStrLn $ "Tiempo en universidad: " ++ show tiempoTotal ++ " segundos."
+                    putStrLn $ "El estudiante con ID " ++ idEstudiante ++ " se encuentra en la universidad."
+                    putStrLn $ "Tiempo en la universidad: " ++ show tiempoTotal ++ " segundos."
                 Nothing -> putStrLn "Estudiante no encontrado en la universidad."
             cicloPrincipal universidad
 
