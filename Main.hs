@@ -1,7 +1,7 @@
 import Data.Time.Clock --Proporciona tipos y funciones para trabajar con tiempo (UTCTime, NominalDiffTime)
 import Data.List --Contiene funciones para manipular listas, como `find`
 import System.IO --Permite operaciones de entrada/salida como lectura/escritura de archivos
-import Control.Exception --Manejo de excepciones
+import Control.Exception--Manejo de excepciones
 import Control.DeepSeq (deepseq) --Proporciona la función `deepseq` para forzar la evaluación completa de estructuras de datos-}
 
 -- Definición del tipo de datos para representar la información de un estudiante
