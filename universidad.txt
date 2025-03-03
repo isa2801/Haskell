@@ -1,1 +1,3 @@
-Estudiante {id = "567", entrada = 2025-02-27 18:15:02.6745614 UTC, salida = 2025-02-28 22:16:10.3916538 UTC}
+Estudiante {id = "322", entrada = 2025-03-03 23:05:23.0199822 UTC, salida = Nothing}
+Estudiante {id = "344", entrada = 2025-03-03 23:05:16.3128388 UTC, salida = Nothing}
+Estudiante {id = "789", entrada = 2025-03-03 23:05:09.9346427 UTC, salida = Nothing}
